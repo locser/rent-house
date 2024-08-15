@@ -8,20 +8,20 @@ export class SignUpDto {
   @MaxLength(30)
   full_name: string;
 
-  @ApiProperty({
-    type: String,
-  })
-  @IsNotEmpty()
-  @MaxLength(15)
-  nick_name: string;
+  // @ApiProperty({
+  //   type: String,
+  // })
+  // @IsNotEmpty()
+  // @MaxLength(15)
+  // nick_name: string;
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     type: String,
-    description: 'Số điện thoại đăng nhập',
+    description: 'email dang nhap',
   })
-  phone: string;
+  email: string;
 
   @IsNotEmpty()
   // @IsStrongPassword()

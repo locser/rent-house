@@ -5,9 +5,9 @@ export class LoginDto {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'Số điện thoại đăng nhập',
+    description: 'Email đăng nhập',
   })
-  phone: string;
+  email: string;
 
   @IsNotEmpty()
   @IsString()

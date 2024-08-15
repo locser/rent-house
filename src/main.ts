@@ -12,6 +12,9 @@ const envConfig = dotenv.parse(fs.readFileSync('.env'));
 
 async function bootstrap() {
   process.env.uv_threadpool_size = os.cpus().length.toString();
+  for (const k in envConfig) {
+    console.log(`${k}=${envConfig[k]}`);
+  }
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: process.env.CONFIG_LOGGER_LEVEL.split(',').filter((level: string): level is LogLevel => {
@@ -42,10 +45,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
-  for (const k in envConfig) {
-    console.log(`${k}=${envConfig[k]}`);
-  }
 
   await app.listen(process.env.SERVICE_PORT);
   console.log(`Application is running on: ${await app.getUrl()}/api`);

@@ -76,7 +76,7 @@ export class UserProfileResponse {
     this.email = user?.email || '';
     this.last_connect = user?.last_connect;
     this.status = user?.status || USER_STATUS.ACTIVE;
-    this.role = user?.role || Role.User;
+    this.role = user?.role || 0;
     this.contact_type = user?.contact_type || 0;
   }
 }

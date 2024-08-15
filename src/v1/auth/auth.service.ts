@@ -2,9 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import * as moment from 'moment-timezone';
+import { USER_STATUS } from 'src/utils.common/utils.enum.common/utils.user.enum';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../shared';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { LoginDto } from './dto/user-sign-in.dto';
 import { SignUpDto } from './dto/user-sign-up.dto';
 
 @Injectable()
@@ -16,7 +19,7 @@ export class AuthService {
     // @Injectable(UserToken.name)
     // private readonly userTokenRepository: Model<UserToken>,
 
-    // private jwtService: JwtService,
+    private jwtService: JwtService,
   ) {}
 
   async checkTokenActive(userId: number, token: string) {
@@ -33,63 +36,68 @@ export class AuthService {
     return true;
   }
 
-  // async signIn(body: LoginDto) {
-  //   try {
-  //     const hasUser = await this.getAuthenticatedUser(
-  //       {
-  //         phone: body.phone,
-  //         status: USER_STATUS.ACTIVE,
-  //       },
-  //       body.password,
-  //     );
+  async signIn(body: LoginDto) {
+    try {
+      const hasUser = await this.getAuthenticatedUser(
+        {
+          email: body.email,
+          status: USER_STATUS.ACTIVE,
+        },
+        body.password,
+      );
 
-  //     if (!hasUser)
-  //       return new HttpException( 'ERROR', HttpStatus.BAD_REQUEST);
+      if (!hasUser) return new HttpException('ERROR', HttpStatus.BAD_REQUEST);
 
-  //     const existToken = await this.usersRepository.findOne({
-  //       user_id: hasUser.id.toString(),
-  //       expired_at: { $gt: +moment() },
-  //       id: new (hasUser.id),
-  //     });
+      // const exis = await this.usersRepository.findOne({
+      //   where: {
+      //     id: hasUser.id,
+      //   },
+      // });
+      // console.log('locser ~ signIn ~ existToken:', existToken);
 
-  //     let access_token;
+      let access_token;
 
-  //     if (!existToken) {
-  //       const payload = {
-  //         id: hasUser.id.toString(),
-  //         role: hasUser.role,
-  //         full_name: hasUser.full_name,
-  //         avatar: hasUser.avatar,
-  //         create_at: +moment(),
-  //       };
+      if (!hasUser.access_token) {
+        const payload = {
+          id: hasUser.id,
+          role: hasUser.role,
+          full_name: hasUser.full_name,
+          avatar: hasUser.avatar,
+          create_at: +moment(),
+        };
 
-  //       access_token = await this.jwtService.signAsync(payload, {
-  //         secret: process.env.JWT_SECRET,
-  //       });
+        access_token = await this.jwtService.signAsync(payload, {
+          secret: process.env.JWT_SECRET,
+        });
 
-  //       await this.usersRepository.update(
-  //         {
-  //           id: hasUser.id,
-  //         },
-  //         {
-  //           user_id: hasUser.id,
-  //           token: access_token,
-  //           expired_at: +moment() + Number(process.env.TIME_TO_LIVE_TOKEN),
-  //         },
-  //       );
-  //     } else {
-  //       access_token = existToken.token;
-  //     }
+        await this.usersRepository.update(
+          {
+            id: hasUser.id,
+          },
+          {
+            id: hasUser.id,
+            access_token: access_token,
+            // expired_at: +moment() + Number(process.env.TIME_TO_LIVE_TOKEN),
+          },
+        );
 
-  //     return new HttpException( 'OK', {
-  //       full_name: hasUser.full_name,
-  //       avatar: hasUser.avatar,
-  //       access_token: access_token,
-  //     });
-  //   } catch (error) {
-  //     console.log('AuthService ~ signIn ~ error:', error);
-  //     return new HttpException( 'ERROR', 'Thông tin đăng nhập không chính xác');
-  //   }
+        console.log('locser ~ signIn ~ access_token:', access_token);
+      } else {
+        // access_token = existToken.access_token;
+        access_token = hasUser.access_token;
+      }
+
+      return {
+        id: hasUser.id,
+        full_name: hasUser.full_name,
+        avatar: hasUser.avatar,
+        access_token: access_token,
+      };
+    } catch (error) {
+      console.log('AuthService ~ signIn ~ error:', error);
+      return new HttpException('Thông tin đăng nhập không chính xác', HttpStatus.BAD_REQUEST);
+    }
+  }
 
   private async verifyPlainContentWithHashedContent(plainText: string, hashedText: string) {
     const is_matching = await bcrypt.compare(plainText, hashedText);
@@ -107,27 +115,27 @@ export class AuthService {
   // }
 
   async signUp(signUpDto: SignUpDto) {
-    // const user = await this.usersRepository.findOne({
-    //   phone: signUpDto.phone,
-    //   status: USER_STATUS.ACTIVE,
-    // });
+    const user = await this.usersRepository.findOne({
+      where: {
+        email: signUpDto.email,
+      },
+    });
 
-    // if (user) {
-    //   throw new HttpException( 'Số điện thoại đã được sử dụng', HttpStatus.BAD_REQUEST);
-    // }
+    if (user) {
+      throw new HttpException('Địa chỉ đã được sử dụng', HttpStatus.BAD_REQUEST);
+    }
 
     const hashedPassword = await bcrypt.hash(signUpDto.password, 5);
 
-    // const newUser = await this.usersRepository.create(
-    //   new UserProfileResponse({
-    //     full_name: signUpDto.full_name,
-    //     nick_name: signUpDto.nick_name,
-    //     phone: signUpDto.phone,
-    //     password: hashedPassword,
-    //   }),
-    // );
+    let newUser = this.usersRepository.create({
+      full_name: signUpDto.full_name,
+      email: signUpDto.email,
+      password: hashedPassword,
+    });
+
+    newUser = await this.usersRepository.save(newUser);
     // instead of the user object
-    // return new HttpException( 'OK', newUser);
+    return newUser;
   }
 
   async changePassword(id: number, changePasswordDto: ChangePasswordDto) {

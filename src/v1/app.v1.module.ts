@@ -1,17 +1,19 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { RouterModule, Routes } from '@nestjs/core';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { HomeModule } from './home/home.module';
 
 //
 let routes: Routes = [
   {
     path: '/v1',
-    children: [UserModule],
+    children: [UserModule, AuthModule],
   },
 ];
 
 @Module({
-  imports: [RouterModule.register(routes), UserModule],
+  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule],
   controllers: [],
   providers: [],
 })

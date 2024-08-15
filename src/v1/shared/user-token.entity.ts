@@ -5,7 +5,7 @@ export class UserTokenEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int', nullable: true, default: '' })
+  @Column({ type: 'int', nullable: false })
   user_id: number;
 
   @Column({ type: 'varchar', length: 255, default: '' })
@@ -14,13 +14,9 @@ export class UserTokenEntity {
   @Column({ type: 'int' })
   expired: number;
 
-  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({
-    type: 'datetime',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
+  @UpdateDateColumn()
   updated_at: Date;
 }

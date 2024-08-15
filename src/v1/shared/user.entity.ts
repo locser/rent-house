@@ -18,10 +18,10 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 255, nullable: true, default: '' })
   address: string;
 
-  @Column({ type: 'varchar', length: 11, nullable: false })
+  @Column({ type: 'varchar', length: 11, nullable: false, default: '' })
   phone: string;
 
-  @Column({ type: 'tinyint', default: 0 })
+  @Column({ type: 'int2', default: 0 })
   gender: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true, default: '' })
@@ -34,21 +34,20 @@ export class UserEntity {
   status: USER_STATUS;
 
   @Column({
-    type: 'simple-array',
-    default: [1],
+    type: 'varchar',
+    default: '',
   })
-  role: number[];
+  role: string;
+
+  @Column({ type: 'int', default: 0 })
+  type: number;
 
   @Column({ type: 'varchar', length: 255, default: '' })
   access_token: string;
 
-  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({
-    type: 'datetime',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
+  @UpdateDateColumn()
   updated_at: Date;
 }
