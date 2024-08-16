@@ -4,11 +4,10 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { HomeModule } from './home/home.module';
 
-//
 let routes: Routes = [
   {
     path: '/v1',
-    children: [UserModule, AuthModule],
+    children: [UserModule, AuthModule, HomeModule],
   },
 ];
 

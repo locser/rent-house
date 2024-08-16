@@ -7,10 +7,9 @@ import * as moment from 'moment-timezone';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthCheckModule } from './health-check/health-check.module';
-// import { AllExceptionsFilter } from './utils.common/utils.exception.common/all-exception-filter.response';
+import { AllExceptionsFilter } from './utils.common/utils.exception.common/all-exception-filter';
 import { AppV1Module } from './v1/app.v1.module';
 import { AuthGuard } from './v1/auth/auth.guard';
-import { AllExceptionsFilter } from './utils.common/utils.exception.common/all-exception-filter';
 
 @Module({
   imports: [
@@ -33,26 +32,26 @@ import { AllExceptionsFilter } from './utils.common/utils.exception.common/all-e
       entities: ['dist/**/*.entity{.ts,.js}'],
       // multipleStatements: true,
       // dateStrings: true,
-      synchronize: true,
+      // synchronize: true,
     }),
-    // HealthCheckModule,
-    // AppV1Module,
+    HealthCheckModule,
+    AppV1Module,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: 'moment-timezone',
-    //   useValue: moment.tz.setDefault('GMT0'),
-    // },
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: AllExceptionsFilter,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
+    {
+      provide: 'moment-timezone',
+      useValue: moment.tz.setDefault('GMT0'),
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
   ],
 })
 export class AppModule {}

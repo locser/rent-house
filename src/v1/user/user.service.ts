@@ -35,11 +35,7 @@ export class UserService {
       throw new HttpException('Update that bai', HttpStatus.BAD_REQUEST);
     }
 
-    return {
-      status: 200,
-      message: 'OK',
-      data: userUpdated,
-    };
+    return userUpdated;
   }
 
   async getProfile(user_id: number, target_id: number) {
@@ -59,15 +55,10 @@ export class UserService {
     if (!user) {
       throw new HttpException('User không tồn tại', HttpStatus.NOT_FOUND);
     }
-    const itMe = user_id === target_id;
 
-    return {
-      status: HttpStatus.OK,
-      message: 'OK',
-      data: new UserProfileResponse({
-        ...user,
-      }),
-    };
+    return new UserProfileResponse({
+      ...user,
+    });
   }
 
   async removeAccount(user_id: number) {

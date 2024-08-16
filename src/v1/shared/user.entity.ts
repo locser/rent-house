@@ -39,7 +39,7 @@ export class UserEntity {
   })
   role: string;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', default: 0, comment: '0: người mua, 1: admin, 2: người bán' })
   type: number;
 
   @Column({ type: 'varchar', length: 255, default: '' })

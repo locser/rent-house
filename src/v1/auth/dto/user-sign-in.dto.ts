@@ -9,6 +9,10 @@ export class LoginDto {
   })
   email: string;
 
+  @ApiProperty({
+    type: String,
+    description: 'password đăng nhập',
+  })
   @IsNotEmpty()
   @IsString()
   password: string;

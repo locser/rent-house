@@ -9,6 +9,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginDto } from './dto/user-sign-in.dto';
 import { SignUpDto } from './dto/user-sign-up.dto';
 import { UserEntity } from '../shared/user.entity';
+import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
 
 @Injectable()
 export class AuthService {
@@ -48,13 +49,6 @@ export class AuthService {
 
       if (!hasUser) return new HttpException('ERROR', HttpStatus.BAD_REQUEST);
 
-      // const exis = await this.usersRepository.findOne({
-      //   where: {
-      //     id: hasUser.id,
-      //   },
-      // });
-      // console.log('locser ~ signIn ~ existToken:', existToken);
-
       let access_token;
 
       if (!hasUser.access_token) {
@@ -81,9 +75,8 @@ export class AuthService {
           },
         );
 
-        console.log('locser ~ signIn ~ access_token:', access_token);
+        // console.log('locser ~ signIn ~ access_token:', access_token);
       } else {
-        // access_token = existToken.access_token;
         access_token = hasUser.access_token;
       }
 
@@ -95,7 +88,7 @@ export class AuthService {
       };
     } catch (error) {
       console.log('AuthService ~ signIn ~ error:', error);
-      return new HttpException('Thông tin đăng nhập không chính xác', HttpStatus.BAD_REQUEST);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -106,13 +99,18 @@ export class AuthService {
     }
   }
 
-  // async logout(userId: string) {
-  //   await this.usersRepository.delete({
-  //     user_id: userId,
-  //   });
+  async logout(userId: number) {
+    await this.usersRepository.update(
+      {
+        id: userId,
+      },
+      {
+        access_token: null,
+      },
+    );
 
-  //   return userId;
-  // }
+    return userId;
+  }
 
   async signUp(signUpDto: SignUpDto) {
     const user = await this.usersRepository.findOne({
@@ -227,6 +225,6 @@ export class AuthService {
       },
     );
 
-    return new HttpException('ERROR', HttpStatus.BAD_REQUEST);
+    return new BaseResponseData(HttpStatus.OK, 'OK');
   }
 }

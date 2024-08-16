@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('booking_details')
+// @Entity('booking_details')
 export class BookingDetailEntity {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id: number;

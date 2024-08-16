@@ -8,5 +8,4 @@ export class CreateHomeDto {
   bathrooms: number;
   status: number;
   image_url?: string;
-  // owner_id: number;
 }

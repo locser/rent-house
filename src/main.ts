@@ -36,13 +36,7 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
-    .addBearerAuth()
-    .setTitle('Master Data Service')
-    .setDescription('The Master Data Service API descriptions')
-    .setVersion('1.7')
-    .addTag('master-data')
-    .build();
+  const config = new DocumentBuilder().addBearerAuth().setTitle('Đồ đồ dồ').setDescription('Đồ đồ dồ').setVersion('1.1').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
