@@ -18,11 +18,11 @@ import { AllExceptionsFilter } from './utils.common/utils.exception.common/all-e
       isGlobal: true,
       envFilePath: '.env',
     }),
-    // JwtModule.register({
-    //   global: true,
-    //   secret: process.env.JWT_SECRET,
-    //   signOptions: { expiresIn: '10 days' },
-    // }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '10 days' },
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.CONFIG_POSTGRES_HOST,
@@ -40,7 +40,7 @@ import { AllExceptionsFilter } from './utils.common/utils.exception.common/all-e
   ],
   controllers: [AppController],
   providers: [
-    // AppService,
+    AppService,
     // {
     //   provide: 'moment-timezone',
     //   useValue: moment.tz.setDefault('GMT0'),

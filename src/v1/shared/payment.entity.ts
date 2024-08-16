@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('transactions')
-export class Transaction {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
-  id: string;
+@Entity('payments')
+export class PaymentEntity {
+  @PrimaryGeneratedColumn({ type: 'int' })
+  id: number;
 
   @Column({ type: 'bigint', default: 0 })
   user_id: string;
@@ -29,15 +29,15 @@ export class Transaction {
   @Column({ type: 'varchar', length: 255, default: '' })
   hash_key: string;
 
-  @Column({ type: 'number', default: false })
+  @Column({ type: 'smallint', default: 0 })
   is_refund: number;
 
-  @Column({ type: 'number', default: false })
+  @Column({ type: 'smallint', default: 0 })
   status: number;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 }

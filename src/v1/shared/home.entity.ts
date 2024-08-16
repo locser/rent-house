@@ -5,19 +5,19 @@ export class HomeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, default: '' })
   title: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', default: '' })
   description: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', default: '' })
   cover: string;
 
   @Column({ type: 'int', comment: 'ảnh cover hay là video cover' })
   cover_type: number;
 
-  @Column()
+  @Column({ type: 'varchar', default: '' })
   address: string;
 
   //diện tích
@@ -27,10 +27,13 @@ export class HomeEntity {
   })
   area: number;
 
-  @Column({ type: 'decimal' })
+  @Column({ type: 'decimal', nullable: false })
   price: number;
 
-  @Column({ default: true })
+  @Column({ type: 'decimal', default: 0 })
+  rating: number;
+
+  @Column({ type: 'int', default: 0 })
   status: number;
 
   @Column({
@@ -39,9 +42,9 @@ export class HomeEntity {
   })
   owner: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 }

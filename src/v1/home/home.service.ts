@@ -22,11 +22,9 @@ export class HomeService {
   // }
 
   async create(createHomeDto: CreateHomeDto) {
-    const createHome = this.homeRepository.create({
-      ...createHomeDto,
-      image_url: createHomeDto.image_url,
-    });
-    return await this.saveHome(this.homeRepository.create(createHome));
+    const newHome = new HomeEntity();
+    // const createHome = this.homeRepository.create(newHome);
+    return await this.save(newHome);
   }
 
   findAll() {
@@ -43,5 +41,10 @@ export class HomeService {
 
   remove(id: number) {
     return `This action removes a #${id} home`;
+  }
+
+  //
+  async save(home: HomeEntity) {
+    return await this.homeRepository.save(home);
   }
 }

@@ -1,5 +1,4 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Request, Res } from '@nestjs/common';
-import { UserEntity } from '../shared';
 import { RequestWithUser } from '../shared/request-with-user.response';
 import { AuthService } from './auth.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -9,6 +8,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
 import { LoginDto } from './dto/user-sign-in.dto';
+import { UserEntity } from '../shared/user.entity';
 
 @ApiTags('Auth')
 @Controller('auth')

@@ -5,10 +5,10 @@ import * as bcrypt from 'bcrypt';
 import * as moment from 'moment-timezone';
 import { USER_STATUS } from 'src/utils.common/utils.enum.common/utils.user.enum';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../shared';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginDto } from './dto/user-sign-in.dto';
 import { SignUpDto } from './dto/user-sign-up.dto';
+import { UserEntity } from '../shared/user.entity';
 
 @Injectable()
 export class AuthService {

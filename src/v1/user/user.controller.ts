@@ -2,8 +2,8 @@ import { Body, Controller, Get, Param, Post, Query, Request, UseGuards } from '@
 import { QueryPhone } from './dto/query-phone.dto';
 import { UserService } from './user.service';
 import { RequestWithUser } from '../shared/request-with-user.response';
-import { UserEntity } from '../shared';
 import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
+import { UserEntity } from '../shared/user.entity';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

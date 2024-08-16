@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('booking_details')
-export class BookingDetails {
+export class BookingDetailEntity {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
-  id: string;
+  id: number;
 
   @Column({ type: 'int', default: 0 })
   booking_id: number;
@@ -20,9 +20,9 @@ export class BookingDetails {
   @Column({ type: 'jsonb', default: 0 })
   booking_detail_option: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 }

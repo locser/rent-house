@@ -8,16 +8,16 @@ export class TopHomeEntity {
   @Column({ type: 'int', default: 0 })
   position: number;
 
-  @Column({ type: 'tinyint', default: 1 })
+  @Column({ type: 'smallint', default: 1 })
   is_active: number;
 
   @Column({ type: 'int', default: 0 })
   type: number;
 
-  @Column()
+  @Column({ nullable: false })
   valid_to_date: Date;
 
-  @Column()
+  @Column({ nullable: false })
   valid_from_date: Date;
 
   @CreateDateColumn()

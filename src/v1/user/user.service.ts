@@ -2,10 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserProfileResponse } from './response/user-profile.response';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from '../shared';
 import { RequestWithUser } from '../shared/request-with-user.response';
 import { USER_STATUS } from 'src/utils.common/utils.enum.common/utils.user.enum';
 import { BlockEntity } from '../shared/block.entity';
+import { UserEntity } from '../shared/user.entity';
 
 @Injectable()
 export class UserService {

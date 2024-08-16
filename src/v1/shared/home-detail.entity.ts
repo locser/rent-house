@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('homes')
-export class HomeEntity {
+@Entity('home_details')
+export class HomeDetailEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,10 +11,10 @@ export class HomeEntity {
   @Column({ type: 'int' })
   price: number;
 
-  @Column()
+  @Column({ type: 'int', default: 0 })
   bedrooms: number;
 
-  @Column()
+  @Column({ type: 'int', default: 0 })
   bathrooms: number;
 
   @Column({ nullable: false, type: 'jsonb' })
@@ -29,7 +29,7 @@ export class HomeEntity {
   @Column({ type: 'int', default: 30 })
   withdrawal_period: number; // Thời gian có thể rút cọc (tính bằng ngày)
 
-  @Column({ type: 'tinyint', default: false })
+  @Column({ type: 'smallint', default: 0 })
   has_wifi: number; // Có wifi hay không
 
   // lat, long

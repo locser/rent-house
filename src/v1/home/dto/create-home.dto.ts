@@ -6,7 +6,7 @@ export class CreateHomeDto {
   monthly_rent: number;
   bedrooms: number;
   bathrooms: number;
-  status: boolean;
+  status: number;
   image_url?: string;
   // owner_id: number;
 }
