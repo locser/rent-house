@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@nestjs/core';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { HomeModule } from './home/home.module';
+import { AdminModule } from './admin/admin.module';
+import { BookingModule } from './booking/booking.module';
 
 let routes: Routes = [
   {
@@ -12,7 +14,7 @@ let routes: Routes = [
 ];
 
 @Module({
-  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule],
+  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule, AdminModule, BookingModule],
   controllers: [],
   providers: [],
 })

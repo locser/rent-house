@@ -36,3 +36,5 @@ lerna-debug.log*
 
 .env
 tham-khao-swing.*
+
+# package-lock.json

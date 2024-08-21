@@ -1,12 +1,10 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Query, Request, Res, UseGuards } from '@nestjs/common';
-import { QueryPhone } from './dto/query-phone.dto';
-import { UserService } from './user.service';
-import { RequestWithUser } from '../shared/request-with-user.response';
-import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
-import { UserEntity } from '../shared/user.entity';
+import { Body, Controller, Get, HttpStatus, Param, Post, Request, Res } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { ChangePasswordDto } from '../auth/dto/change-password.dto';
 import { Response } from 'express';
+import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
+import { RequestWithUser } from '../shared/request-with-user.response';
+import { UserEntity } from '../shared/user.entity';
+import { UserService } from './user.service';
 
 @ApiTags('User')
 @Controller('users')
@@ -31,12 +29,6 @@ export class UserController {
     return res.status(HttpStatus.OK).json(new BaseResponseData(HttpStatus.OK, 'OK', data));
   }
 
-  // @Get('find-phone')
-  // async findUserByPhone(@Request() req: RequestWithUser, @Query() query: QueryPhone) {
-  //   const data = await this.userService.findUserByPhone(req.user.id, query.phone);
-  //   return data;
-  // }
-
   @ApiOperation({ summary: 'Gửi yêu cầu xóa tài khoản' })
   @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
   // @ApiBody({ type: UserEntity, description: '' })
@@ -52,6 +44,34 @@ export class UserController {
   async listBlockUser(@Request() req: RequestWithUser) {
     const data = await this.userService.listBlockUser(req.user.id);
     return new BaseResponseData(200, 'OK', data);
+  }
+
+  @ApiOperation({ summary: 'Thêm nhà vào cho danh sách yêu thích' })
+  @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
+  @ApiParam({ type: Number, name: 'id', description: 'Id của nhà cho thuê' })
+  @Get('/:id/add-wishlist')
+  async addWishlist(@Param('id') id: string, @Res() res: Response) {
+    return res.status(HttpStatus.OK).send(new BaseResponseData(HttpStatus.BAD_REQUEST, 'Chưa hoàn thiện API'));
+    // return this.homeService.findOne(id);
+  }
+
+  @ApiOperation({ summary: 'Xóa nhà khỏi danh sách yêu thích' })
+  @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
+  @ApiParam({ type: Number, name: 'id', description: 'Id của nhà cho thuê' })
+  @Get('/:id/remove-wishlist')
+  async removeWishlist(@Param('id') id: string, @Res() res: Response) {
+    return res.status(HttpStatus.OK).send(new BaseResponseData(HttpStatus.BAD_REQUEST, 'Chưa hoàn thiện API'));
+    // return this.homeService.findOne(id);
+  }
+
+  // get list wish-list
+  @ApiOperation({ summary: 'Lấy danh sách nhà đã thêm vào danh sách yêu thích' })
+  @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
+  // @ApiParam({ type: Number, name: 'id', description: 'Id của nhà cho thuê' })
+  @Get('wishlist')
+  async listWishlist(@Request() req: RequestWithUser) {
+    // const data = await this.userService.listWishlist(req.user.id);
+    return new BaseResponseData(200, 'OK', []);
   }
 
   // @Post('block-user/:target_id')
