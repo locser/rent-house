@@ -1,13 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateReviewDTO } from './dto/create-review.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ReviewEntity } from '../shared/review.entity';
+import { DataSourceService } from 'src/database-source/database_source.service';
+import { BOOKING_STATUS } from 'src/utils.common/utils.enum.common/utils.booking.enum';
 import { Repository } from 'typeorm';
 import { BookingEntity } from '../booking/entities/booking.entity';
+import { ReviewEntity } from '../shared/review.entity';
 import { UserEntity } from '../shared/user.entity';
-import { TYPE_PLATFORM } from '../auth/auth.guard';
-import { BOOKING_STATUS } from 'src/utils.common/utils.enum.common/utils.booking.enum';
-import { DataSourceService } from 'src/database-source/database_source.service';
+import { CreateReviewDTO } from './dto/create-review.dto';
 
 @Injectable()
 export class ReviewService {
@@ -20,14 +19,12 @@ export class ReviewService {
 
   async create(user: UserEntity, createReviewDTO: CreateReviewDTO) {
      const { content, home_id, rating} = createReviewDTO;
-     console.log({ content, home_id, rating})
      const hasBooked: BookingEntity = await this.dataSourceService.findOne<BookingEntity>(BookingEntity, {
       user_booking_id: user.id,
       status: BOOKING_STATUS.ACCEPTED,
       home_id: home_id
     });
 
-    console.log(hasBooked)
      if (!hasBooked) {
        throw new HttpException('Bạn chưa trải nghiệm phòng này để có thể đánh giá.', HttpStatus.BAD_REQUEST);
      }
@@ -49,17 +46,28 @@ export class ReviewService {
         'review.content AS review_content',
         'review.home_id AS review_home_id',
         'review.rating AS review_rating',
+        'review.status AS review_status',
         'user.full_name AS user_full_name', // Chọn chỉ field full_name từ UserEntity
       ])
       .skip(offset)
       .take(limit);
+
+      if(id !== 0) {
+        queryBuilder.where('review.home_id = :home_id', { home_id: id }) 
+        queryBuilder.where('review.status = :status', { status: 1 }) 
+      }
+
       return {
         total_record: await queryBuilder.getCount(),
         data: (await queryBuilder.getRawAndEntities()).raw
       }
   }
 
-  async findReviewsByHomeId(homeId: number): Promise<ReviewEntity[]> {
-    return this.dataSourceService.find<ReviewEntity>(ReviewEntity, { home_id: homeId });
+  async changeStatus(id: number){
+    return await this.selfRepository.update({
+      id
+    }, {
+      status: 0
+    })
   }
 }

@@ -14,9 +14,12 @@ export class ReviewEntity {
   @Column({ type: 'int', default: 0 })
   rating: number; 
 
+  @Column({ type: 'int', default: 1 })
+  status: number; 
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   content: string; 
-  
+
   @CreateDateColumn()
   created_at: Date;
 

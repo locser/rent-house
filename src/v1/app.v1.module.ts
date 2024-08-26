@@ -6,16 +6,17 @@ import { HomeModule } from './home/home.module';
 import { AdminModule } from './admin/admin.module';
 import { BookingModule } from './booking/booking.module';
 import { ReviewModule } from 'src/v1/review/review.module';
+import { ReportModule } from './report/report.module';
 
 let routes: Routes = [
   {
     path: '/v1',
-    children: [UserModule, AuthModule, HomeModule, AdminModule, BookingModule, ReviewModule],
+    children: [UserModule, AuthModule, HomeModule, AdminModule, BookingModule, ReviewModule, ReportModule],
   },
 ];
 
 @Module({
-  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule, AdminModule, BookingModule, ReviewModule],
+  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule, AdminModule, BookingModule, ReviewModule, ReportModule],
   controllers: [],
   providers: [],
 })
