@@ -23,7 +23,7 @@ export class AuthController {
   async signIn(@Body() body: LoginDto, @Res() res: Response) {
     console.log('AuthController ~ signIn ~ body:', body);
     const data = await this.authService.signIn(body);
-    return;
+    return res.status(HttpStatus.OK).send(new BaseResponseData(HttpStatus.OK, 'OK', data));
   }
 
   @ApiOperation({ summary: 'đăng xuất người dùng' })

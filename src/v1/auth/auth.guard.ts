@@ -1,4 +1,15 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  applyDecorators,
+  CanActivate,
+  createParamDecorator,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  SetMetadata,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -8,6 +19,7 @@ import { DataSource } from 'typeorm';
 import { UserEntity } from '../shared/user.entity';
 
 import { IS_PUBLIC_KEY, ROLES_KEY } from './roles.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,17 +32,17 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [context.getHandler(), context.getClass()]);
+    const requiredPlatforms = this.reflector.getAllAndOverride<TYPE_PLATFORM[]>(PLATFORM_KEY, [context.getHandler(), context.getClass()]);
 
-    if (isPublic) {
-      // 💡 See this condition
+    if (!requiredPlatforms || requiredPlatforms.length === 0) {
       return true;
     }
 
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
+
     if (!token) {
-      throw new UnauthorizedException();
+      throw new HttpException('Token không tồn tại', HttpStatus.UNAUTHORIZED);
     }
 
     let payload;
@@ -43,22 +55,37 @@ export class AuthGuard implements CanActivate {
       throw new HttpException('Xác thực user không thành công', HttpStatus.UNAUTHORIZED);
     }
 
-    const hasAccess = await this.checkTokenActive(payload.id, token);
+    const user = await this.dataSource.getRepository(UserEntity).findOne({
+      where: {
+        id: payload.id,
+      },
+    });
 
-    if (!hasAccess) {
-      throw new HttpException('Xác thực user không thành công', HttpStatus.UNAUTHORIZED);
+    if (!user) {
+      throw new HttpException('Người dùng không tồn tại', HttpStatus.UNAUTHORIZED);
     }
 
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [context.getHandler(), context.getClass()]);
+    console.log('locser -> file: auth.guard.ts:78 -> canActivate -> payload:', user);
 
-    if (!requiredRoles) {
-    } else {
-      if (!requiredRoles.includes(payload?.role)) {
-        throw new HttpException('Không có quyền truy cập', HttpStatus.FORBIDDEN);
-      }
-    }
+    // const hasAccess = await this.checkTokenActive(payload.id, token);
 
-    request['user'] = payload;
+    // if (!hasAccess) {
+    //   throw new HttpException('Xác thực user không thành công', HttpStatus.UNAUTHORIZED);
+    // }
+    console.log('locser -> file: auth.guard.ts:91 -> canActivate -> requiredPlatforms, payload.type:', requiredPlatforms, payload.type);
+
+    if (this.checkPlatforms(requiredPlatforms, user.type)) throw new HttpException('Người dùng không tồn tại', HttpStatus.UNAUTHORIZED);
+
+    // const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [context.getHandler(), context.getClass()]);
+
+    // if (!requiredRoles) {
+    // } else {
+    //   if (!requiredRoles.includes(payload?.role)) {
+    //     throw new HttpException('Không có quyền truy cập', HttpStatus.FORBIDDEN);
+    //   }
+    // }
+
+    request['user'] = user;
 
     return true;
   }
@@ -81,4 +108,27 @@ export class AuthGuard implements CanActivate {
 
     return true;
   }
+
+  private checkPlatforms(platforms: TYPE_PLATFORM[], type: number) {
+    if (!platforms || platforms.length === 0) return false;
+    return !platforms.includes(type);
+  }
+}
+
+export const GetUserFromToken = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
+  const request = ctx.switchToHttp().getRequest();
+  const user: UserEntity = request['user'];
+
+  return user;
+});
+
+const PLATFORM_KEY = 'platforms';
+export function Auth(...platforms: TYPE_PLATFORM[]) {
+  return applyDecorators(SetMetadata(PLATFORM_KEY, platforms), UseGuards(AuthGuard), ApiBearerAuth());
+}
+
+export enum TYPE_PLATFORM {
+  ADMIN = 1,
+  SELLER = 2,
+  CUSTOMER = 3,
 }

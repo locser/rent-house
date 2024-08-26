@@ -7,5 +7,5 @@ export class CreateBookingDto {
 
     type: 'number',
   })
-  customerId: string;
+  id: string;
 }

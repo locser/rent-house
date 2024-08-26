@@ -1,10 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource, FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
 
 @Injectable()
 export class DataSourceService {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    // use databaseSource for all
+    @InjectDataSource()
+    private dataSource: DataSource,
+  ) {}
 
   async checkExistOne<T>(entityClass: new () => T, findOneOptionWhere: FindOptionsWhere<T>) {
     const entity = await this.dataSource.getRepository(entityClass).exists({ where: findOneOptionWhere });
@@ -32,12 +36,11 @@ export class DataSourceService {
   }
 
   // find many by ids
-  async find<T>(entityClass: new () => T, findOneOptionWhere: FindOptionsWhere<T>, order?: FindOptionsOrder<T>): Promise<T[]> {
+  async find<T>(entityClass: new () => T, findOneOptionWhere: FindOptionsWhere<T>): Promise<T[]> {
     const repository: Repository<T> = this.dataSource.getRepository(entityClass);
 
     const foundEntities = await repository.find({
       where: findOneOptionWhere,
-      order: order,
     });
 
     return foundEntities;
@@ -51,9 +54,9 @@ export class DataSourceService {
   }
 
   // save one entity
-  async save<T>(entityClass: new () => T, newEntity: T): Promise<T> {
+  async save<T>(entityClass: new () => T, entity: T): Promise<T> {
     const repository: Repository<T> = this.dataSource.getRepository(entityClass);
-    const savedEntity = await repository.save(newEntity);
+    const savedEntity = await repository.save(entity);
     return savedEntity;
   }
 }

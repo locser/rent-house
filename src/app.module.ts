@@ -32,7 +32,7 @@ import { AuthGuard } from './v1/auth/auth.guard';
       entities: ['dist/**/*.entity{.ts,.js}'],
       // multipleStatements: true,
       // dateStrings: true,
-      // synchronize: true,
+      synchronize: true,
     }),
     HealthCheckModule,
     AppV1Module,
@@ -48,10 +48,10 @@ import { AuthGuard } from './v1/auth/auth.guard';
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
     },
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // },
   ],
 })
 export class AppModule {}

@@ -9,7 +9,7 @@ import { BookingModule } from './booking/booking.module';
 let routes: Routes = [
   {
     path: '/v1',
-    children: [UserModule, AuthModule, HomeModule],
+    children: [UserModule, AuthModule, HomeModule, AdminModule, BookingModule],
   },
 ];
 
