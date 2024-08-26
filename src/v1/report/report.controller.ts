@@ -4,12 +4,12 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BaseResponseData, returnBaseResponse } from 'src/utils.common/utils.response.common/utils.base.response.common';
 import { CreateReportDTO } from './dto/create.dto';
 import { Auth, GetUserFromToken, TYPE_PLATFORM } from '../auth/auth.guard';
-import { UserEntity } from '../shared/user.entity';
 import { ReportEntity } from '../shared/report.entity';
 import { ParamEntityDTO, QueryPaginationDTO } from 'src/utils.common/utils.validator.common/query-pagination';
 import { Pagination } from 'src/utils.common/utils.pagination.pagination/utils.pagination';
 import { BaseListResponseData } from 'src/utils.common/utils.response.common/utils.base-list.response.common';
 import { Response } from 'express';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Auth(TYPE_PLATFORM.ADMIN, TYPE_PLATFORM.SELLER, TYPE_PLATFORM.CUSTOMER)
 @ApiTags('REPORT')
@@ -25,12 +25,12 @@ export class ReportController {
     returnBaseResponse(res, data);
   }
 
-  @Get("")
+  @Get('')
   @ApiOperation({ summary: 'Lấy toàn bộ reports' })
   @ApiOkResponse({ type: [ReportEntity], description: 'Danh sách tất cả các report' })
-  async getAllReports(@Res() res: Response, @Query() query: QueryPaginationDTO, @Query('home_id') id: number){
+  async getAllReports(@Res() res: Response, @Query() query: QueryPaginationDTO, @Query('home_id') id: number) {
     const pagination = new Pagination(query.page, query.limit);
-     const {total_record, data} = await this.reportService.findAllReport(id, pagination.getOffset(), query.page, query.limit);
+    const { total_record, data } = await this.reportService.findAllReport(id, pagination.getOffset(), query.page, query.limit);
     const baseListResponse = new BaseListResponseData(data, query.limit, total_record);
 
     returnBaseResponse(res, baseListResponse);

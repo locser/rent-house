@@ -3,13 +3,13 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BaseResponseData, returnBaseResponse } from 'src/utils.common/utils.response.common/utils.base.response.common';
 import { Auth, GetUserFromToken, TYPE_PLATFORM } from '../auth/auth.guard';
 import { ReviewEntity } from '../shared/review.entity';
-import { UserEntity } from '../shared/user.entity';
 import { CreateReviewDTO } from './dto/create-review.dto';
 import { ReviewService } from './review.service';
 import { Response } from 'express';
 import { BaseListResponseData } from 'src/utils.common/utils.response.common/utils.base-list.response.common';
 import { ParamEntityDTO, QueryPaginationDTO } from 'src/utils.common/utils.validator.common/query-pagination';
 import { Pagination } from 'src/utils.common/utils.pagination.pagination/utils.pagination';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Auth(TYPE_PLATFORM.ADMIN, TYPE_PLATFORM.SELLER, TYPE_PLATFORM.CUSTOMER)
 @ApiTags('REVIEW')
@@ -25,12 +25,12 @@ export class ReviewController {
     returnBaseResponse(res, data);
   }
 
-  @Get("")
+  @Get('')
   @ApiOperation({ summary: 'Lấy toàn bộ reviews' })
   @ApiOkResponse({ type: [ReviewEntity], description: 'Danh sách tất cả các review' })
-  async getAllReviews(@Res() res: Response, @Query() query: QueryPaginationDTO, @Query('home_id') id: number){
+  async getAllReviews(@Res() res: Response, @Query() query: QueryPaginationDTO, @Query('home_id') id: number) {
     const pagination = new Pagination(query.page, query.limit);
-     const {total_record, data} = await this.reviewService.findAllReviews(id, pagination.getOffset(), query.page, query.limit);
+    const { total_record, data } = await this.reviewService.findAllReviews(id, pagination.getOffset(), query.page, query.limit);
     const baseListResponse = new BaseListResponseData(data, query.limit, total_record);
 
     returnBaseResponse(res, baseListResponse);
