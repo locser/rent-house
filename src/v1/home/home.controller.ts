@@ -5,14 +5,14 @@ import { Pagination } from 'src/utils.common/utils.pagination.pagination/utils.p
 import { BaseResponseData, returnBaseResponse } from 'src/utils.common/utils.response.common/utils.base.response.common';
 import { ParamEntityDTO } from 'src/utils.common/utils.validator.common/query-pagination';
 import { Auth, GetUserFromToken, TYPE_PLATFORM } from '../auth/auth.guard';
-import { UserEntity } from '../shared/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
+import { BodyBookingDto } from './dto/body-booking.dto';
 import { CreateHomeDto } from './dto/create-home.dto';
 import { QueryGetHomePaginationDto } from './dto/query-get-pagination.dto';
 import { UpdateHomeDto } from './dto/update-home.dto';
 import { HomeService } from './home.service';
 import { DetailHomeResponse } from './response/detail-home.response';
 import { HomeResponse } from './response/home-response.response';
-import { BodyBookingDto } from './dto/body-booking.dto';
 
 @Auth(TYPE_PLATFORM.ADMIN, TYPE_PLATFORM.SELLER)
 @ApiTags('Home')
@@ -108,4 +108,38 @@ export class HomeController {
     return res.status(HttpStatus.OK).send(new BaseResponseData(HttpStatus.BAD_REQUEST, 'Chưa hoàn thiện API'));
     // return this.homeService.search(createHomeDto);
   }
+
+  // // tạo services trong nhà cho thuê
+  // @ApiOperation({ summary: 'Tạo services cho nhà thuê, có cách service nào' })
+  // @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
+  // @ApiQuery({ type: CreateHomeDto })
+  // @Auth(TYPE_PLATFORM.ADMIN)
+  // @Post('services')
+  // async createService(@Body() body: CreateServiceDto, @Res() res: Response) {
+  //   const data = await this.homeService.createService(body);
+  //   returnBaseResponse(res, data);
+  // }
+
+  // // gán services cho nhà cho thuê
+  // @ApiOperation({ summary: 'Gán services cho nhà thuê' })
+  // @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
+  // @ApiQuery({ type: CreateHomeDto })
+  // @Auth(TYPE_PLATFORM.SELLER, TYPE_PLATFORM.ADMIN)
+  // @Post('/:id/services/assign')
+  // async assignServices(@Param() param: ParamEntityDTO, @Body() body: any, @Res() res: Response) {
+  //   const data = await this.homeService.assignServices(param.id, body);
+
+  //   returnBaseResponse(res);
+  // }
+
+  // // cập nhật services cho nhà cho thuê
+  // @ApiOperation({ summary: 'Cập nhật services cho nhà thuê' })
+  // @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
+  // @ApiQuery({ type: CreateHomeDto })
+  // @Auth(TYPE_PLATFORM.SELLER, TYPE_PLATFORM.ADMIN)
+  // @Post('/services/:id/update')
+  // async updateServices(@Param() param: ParamEntityDTO, @Body() body: any, @Res() res: Response) {
+  //   const data = await this.homeService.updateServices(param.id, body);
+  //   returnBaseResponse(res, data);
+  // }
 }

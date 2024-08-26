@@ -143,5 +143,5 @@ export class CreateHomeDto {
     example: 'hểm 1, nhà 1/2/3',
     description: 'địa chỉ cụ thể chi tiết',
   })
-  note: string;
+  detail: string;
 }

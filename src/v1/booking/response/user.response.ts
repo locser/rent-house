@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UtilsTime } from 'src/utils.common/utils.time.common/utils.time.common';
-import { UserEntity } from 'src/v1/shared/user.entity';
+import { UserEntity } from 'src/v1/user/entities/user.entity';
 
 export class BaseUserResponse {
   @ApiProperty({

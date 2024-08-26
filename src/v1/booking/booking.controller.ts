@@ -7,7 +7,7 @@ import { BaseResponseData, returnBaseResponse } from 'src/utils.common/utils.res
 import { ParamEntityDTO, QueryPaginationDTO } from 'src/utils.common/utils.validator.common/query-pagination';
 import { Auth, GetUserFromToken, TYPE_PLATFORM } from '../auth/auth.guard';
 import { BodyBookingDto } from '../home/dto/body-booking.dto';
-import { UserEntity } from '../shared/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { BookingService } from './booking.service';
 import { BodyUpdateStatusDto } from './dto/body-update-status.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';

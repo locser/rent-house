@@ -2,7 +2,7 @@ import { HomeEntity } from 'src/v1/home/entities/home.entity';
 import { BookingEntity } from '../entities/booking.entity';
 import { BaseUserResponse } from './user.response';
 import { HomeResponse } from 'src/v1/home/response/home-response.response';
-import { UserEntity } from 'src/v1/shared/user.entity';
+import { UserEntity } from 'src/v1/user/entities/user.entity';
 import { UtilsTime } from 'src/utils.common/utils.time.common/utils.time.common';
 
 export class BookingResponse {

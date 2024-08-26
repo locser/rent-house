@@ -8,7 +8,7 @@ import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
 import { LoginDto } from './dto/user-sign-in.dto';
-import { UserEntity } from '../shared/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 
 @ApiTags('Auth - xác thực')
 @Controller('auth')

@@ -15,8 +15,8 @@ export class UserEntity {
   @Column({ type: 'varchar', nullable: false, default: '' })
   password: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true, default: '' })
-  address: string;
+  @Column({ type: 'int', nullable: true, default: 0 })
+  address: number;
 
   @Column({ type: 'varchar', length: 11, nullable: false, default: '' })
   phone: string;

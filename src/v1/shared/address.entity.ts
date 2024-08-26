@@ -4,16 +4,22 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 export class AddressEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ type: 'int', default: 0 })
   city_id: number;
+
   @Column({ type: 'int', default: 0 })
   ward_id: number;
+
   @Column({ type: 'int', default: 0 })
   district_id: number;
+
   @Column({ type: 'text', default: '' })
-  note: string;
+  detail: string;
+
   @CreateDateColumn()
   created_at: Date;
+
   @UpdateDateColumn()
   updated_at: Date;
 }

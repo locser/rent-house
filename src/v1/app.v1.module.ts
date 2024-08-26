@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { HomeModule } from './home/home.module';
 import { AdminModule } from './admin/admin.module';
 import { BookingModule } from './booking/booking.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 let routes: Routes = [
   {
@@ -14,7 +15,7 @@ let routes: Routes = [
 ];
 
 @Module({
-  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule, AdminModule, BookingModule],
+  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule, AdminModule, BookingModule, WishlistModule],
   controllers: [],
   providers: [],
 })

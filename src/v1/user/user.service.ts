@@ -1,23 +1,27 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserProfileResponse } from './response/user-profile.response';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { RequestWithUser } from '../shared/request-with-user.response';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSourceService } from 'src/database-source/database_source.service';
 import { USER_STATUS } from 'src/utils.common/utils.enum.common/utils.user.enum';
-import { BlockEntity } from '../shared/block.entity';
-import { UserEntity } from '../shared/user.entity';
+import { DataSource, Repository } from 'typeorm';
+import { AddressEntity } from '../shared/address.entity';
+import { RequestWithUser } from '../shared/request-with-user.response';
+import { BodyUpdateUserAddressDto } from './dto/body-update-user-address.dto';
+import { BlockEntity } from './entities/block.entity';
+import { UserEntity } from './entities/user.entity';
+import { UserProfileResponse } from './response/user-profile.response';
 
 @Injectable()
 export class UserService {
   constructor(
+    @InjectDataSource()
+    private dataSource: DataSource,
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
 
-    // @InjectRepository(Friend.name)
-    // private readonly friendRepository: Repository<Friend>,
-
     @InjectRepository(BlockEntity)
     private readonly blockUsersRepository: Repository<BlockEntity>,
+
+    private readonly dataSourceService: DataSourceService,
 
     // @InjectRepository(UserToken.name)
     // private readonly userTokenRepository: Repository<UserToken>,
@@ -71,6 +75,32 @@ export class UserService {
     // return new BaseResponse(200, 'OK', 'Xóa tài khoản thành công');
   }
 
+  async updateAddress(req: UserEntity, body: BodyUpdateUserAddressDto) {
+    // check địa chỉ đã tồn tại chưua
+
+    // const address = await this.dataSourceService.findOne(AddressEntity, {
+    //   where: {
+    //     address: body.address,
+    //   },
+    // })
+
+    const newAddress = this.dataSource.getRepository(AddressEntity).create({
+      city_id: body.city_id,
+      ward_id: body.ward_id,
+      district_id: body.district_id,
+      detail: body.detail,
+    });
+
+    await this.usersRepository.update(
+      {
+        id: req.id,
+      },
+      {
+        address: newAddress.id,
+      },
+    );
+    // await this.usersRepository
+  }
   // async findUserByPhone(user_id: number, phone: number) {
   //   const listBlockUser = await this.blockUsersRepository.find({
   //     user_id: user_id,

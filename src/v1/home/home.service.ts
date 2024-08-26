@@ -11,15 +11,28 @@ import { HOME_STATUS } from 'src/utils.common/utils.enum.common/utils.home.enum'
 import { Pagination } from 'src/utils.common/utils.pagination.pagination/utils.pagination';
 import { BookingEntity } from '../booking/entities/booking.entity';
 import { AddressEntity } from '../shared/address.entity';
-import { UserEntity } from '../shared/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { BodyBookingDto } from './dto/body-booking.dto';
 import { TopHomeEntity } from './entities/top-home.entity';
+import { CreateServiceDto } from './dto/create-services.dto';
+import { ServiceEntity } from './entities/service.entity';
+import { BodyAssignServicesDto } from './dto/body-assign-services.dto';
 
 @Injectable()
 export class HomeService {
+  async listServices() {
+    return await this.serviceRepository.find();
+  }
+  async deleteServices(id: number) {
+    await this.serviceRepository.delete({ id: id });
+  }
+
   constructor(
     @InjectRepository(HomeEntity)
     private readonly homeRepository: Repository<HomeEntity>,
+
+    @InjectRepository(ServiceEntity)
+    private readonly serviceRepository: Repository<ServiceEntity>,
 
     private readonly dataSourceService: DataSourceService,
   ) {}
@@ -49,7 +62,7 @@ export class HomeService {
   async create(createHomeDto: CreateHomeDto, user: UserEntity) {
     let address: AddressEntity = new AddressEntity();
     // addresses.id = createHomeDto.address_id;
-    address.note = createHomeDto.note;
+    address.detail = createHomeDto.detail;
     address.ward_id = createHomeDto.ward_id;
     address.district_id = createHomeDto.district_id;
     address.city_id = createHomeDto.city_id;
@@ -109,7 +122,7 @@ export class HomeService {
     });
 
     // addresses.id = createHomeDto.address_id;
-    address.note = homeDto.note;
+    address.detail = homeDto.detail;
     address.ward_id = homeDto.ward_id;
     address.district_id = homeDto.district_id;
     address.city_id = homeDto.city_id;
@@ -162,6 +175,72 @@ export class HomeService {
     await this.dataSourceService.save(BookingEntity, newBooking);
 
     return newBooking;
+  }
+
+  async updateServices(id: number, body: any) {
+    const service = await this.serviceRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!service) {
+      throw new HttpException('Dịch vụ không tồn tại!', HttpStatus.BAD_REQUEST);
+    }
+
+    // check name of service if exist throw error
+
+    const service_exist = await this.dataSourceService.findOne(ServiceEntity, {
+      name: body.name,
+    });
+
+    if (service_exist && service_exist.id !== service.id) {
+      throw new HttpException('Dịch vụ này đã có trong hệ thống!', HttpStatus.BAD_REQUEST);
+    }
+
+    service.name = body.name;
+    service.price = body.price;
+    service.type = body.type;
+    service.description = body.description;
+
+    return await this.dataSourceService.save(ServiceEntity, service);
+  }
+  async assignServices(id: number, body: BodyAssignServicesDto) {
+    // check body service_ids is all exist
+    const services = await this.dataSourceService.find(ServiceEntity, {
+      id: In(body.service_ids),
+    });
+
+    if (services.length !== body.service_ids.length) {
+      throw new HttpException('Dịch vụ không tồn tại!', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.homeRepository.update(
+      { id: id },
+      {
+        services: body.service_ids,
+      },
+    );
+  }
+  async createService(body: CreateServiceDto) {
+    //check name of service if exist return false
+    const service = await this.dataSourceService.findOne(ServiceEntity, {
+      name: body.name,
+    });
+
+    if (service) {
+      throw new HttpException('Dịch vụ này đã có trong hệ thống!', HttpStatus.BAD_REQUEST);
+    }
+
+    let newService = this.serviceRepository.create({
+      price: body.price,
+      type: body.type,
+      name: body.name,
+      description: body.description,
+    });
+    newService = await this.serviceRepository.save(newService);
+
+    return newService;
   }
 
   async findOne(id: number) {

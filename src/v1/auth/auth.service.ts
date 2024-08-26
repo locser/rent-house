@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginDto } from './dto/user-sign-in.dto';
 import { SignUpDto } from './dto/user-sign-up.dto';
-import { UserEntity } from '../shared/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
 
 @Injectable()

@@ -6,7 +6,7 @@ import { In, Not, Repository } from 'typeorm';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { DataSourceService } from 'src/database-source/database_source.service';
 import { ParamEntityDTO, QueryPaginationDTO } from 'src/utils.common/utils.validator.common/query-pagination';
-import { UserEntity } from '../shared/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { TYPE_PLATFORM } from '../auth/auth.guard';
 import { HomeEntity } from '../home/entities/home.entity';
 import { BookingResponse } from './response/booking.response';

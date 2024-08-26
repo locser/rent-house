@@ -16,7 +16,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { Role } from 'src/utils.common/utils.enum.common/utils.user.enum';
 import { DataSource } from 'typeorm';
-import { UserEntity } from '../shared/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 
 import { IS_PUBLIC_KEY, ROLES_KEY } from './roles.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
