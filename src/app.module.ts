@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as moment from 'moment-timezone';
@@ -9,7 +9,6 @@ import { AppService } from './app.service';
 import { HealthCheckModule } from './health-check/health-check.module';
 import { AllExceptionsFilter } from './utils.common/utils.exception.common/all-exception-filter';
 import { AppV1Module } from './v1/app.v1.module';
-import { AuthGuard } from './v1/auth/auth.guard';
 
 @Module({
   imports: [
@@ -32,7 +31,7 @@ import { AuthGuard } from './v1/auth/auth.guard';
       entities: ['dist/**/*.entity{.ts,.js}'],
       // multipleStatements: true,
       // dateStrings: true,
-      synchronize: true,
+      // synchronize: true,
     }),
     HealthCheckModule,
     AppV1Module,

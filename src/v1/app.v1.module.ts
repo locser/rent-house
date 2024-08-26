@@ -5,16 +5,17 @@ import { AuthModule } from './auth/auth.module';
 import { HomeModule } from './home/home.module';
 import { AdminModule } from './admin/admin.module';
 import { BookingModule } from './booking/booking.module';
+import { ReviewModule } from 'src/v1/review/review.module';
 
 let routes: Routes = [
   {
     path: '/v1',
-    children: [UserModule, AuthModule, HomeModule, AdminModule, BookingModule],
+    children: [UserModule, AuthModule, HomeModule, AdminModule, BookingModule, ReviewModule],
   },
 ];
 
 @Module({
-  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule, AdminModule, BookingModule],
+  imports: [RouterModule.register(routes), UserModule, AuthModule, HomeModule, AdminModule, BookingModule, ReviewModule],
   controllers: [],
   providers: [],
 })
