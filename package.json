@@ -35,12 +35,14 @@
     "moment-timezone": "^0.5.45",
     "mysql2": "^3.11.0",
     "nanoid": "^5.0.7",
+    "nestjs-vnpay": "^0.1.0",
     "node-mocks-http": "^1.15.1",
     "pg": "^8.12.0",
     "psql": "^0.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "vnpay": "^1.6.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

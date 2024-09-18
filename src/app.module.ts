@@ -34,7 +34,13 @@ import { AppV1Module } from './v1/app.v1.module';
       // synchronize: true,
       retryAttempts: 3,
       retryDelay: 3000,
+      // ssl: 'verify-full',
     }),
+    // TypeOrmModule.forRoot({
+    //   type: 'postgres',
+    //   url: process.env.POSTGRE_STRING,
+
+    // }),
     HealthCheckModule,
     AppV1Module,
   ],

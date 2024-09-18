@@ -36,13 +36,15 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder().setTitle('Đồ đồ dồ').setDescription('Đồ đồ dồ').setVersion('1').addBearerAuth().build();
+  const config = new DocumentBuilder().setTitle('swagger').setDescription('swagger').setVersion('1').addBearerAuth().build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
     },
   });
+
+  process.env.TZ = 'Asia/Ho_Chi_Minh';
 
   await app.listen(process.env.SERVICE_PORT);
   console.log(`Application is running on: ${await app.getUrl()}/api`);

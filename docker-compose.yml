@@ -1,0 +1,10 @@
+version: '3.4'
+services:
+  app:
+    image: vn.techres.vn:1.0.0
+    build: .
+    volumes:
+      - ./configs/logs:/app/configs/logs
+    ports:
+      - '3000:3000'
+    restart: unless-stopped

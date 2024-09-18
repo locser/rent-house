@@ -9,11 +9,23 @@ import { ReportModule } from './report/report.module';
 import { UserModule } from './user/user.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { MediaModule } from './media/media.module';
+// import { MyVnpayModule } from './vnpay/vnpay.module';
 
 let routes: Routes = [
   {
     path: '/v1',
-    children: [UserModule, AuthModule, HomeModule, AdminModule, BookingModule, ReviewModule, ReportModule, WishlistModule, MediaModule],
+    children: [
+      UserModule,
+      AuthModule,
+      HomeModule,
+      AdminModule,
+      BookingModule,
+      ReviewModule,
+      ReportModule,
+      WishlistModule,
+      MediaModule,
+      // MyVnpayModule,
+    ],
   },
 ];
 
@@ -29,6 +41,7 @@ let routes: Routes = [
     ReportModule,
     WishlistModule,
     MediaModule,
+    // MyVnpayModule,
   ],
   controllers: [],
   providers: [],
