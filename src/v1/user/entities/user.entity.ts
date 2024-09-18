@@ -21,7 +21,7 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 11, nullable: false, default: '' })
   phone: string;
 
-  @Column({ type: 'int2', default: 0 })
+  @Column({ type: 'smallint', default: 0 })
   gender: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true, default: '' })
@@ -45,9 +45,9 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 255, default: '' })
   access_token: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
   updated_at: Date;
 }

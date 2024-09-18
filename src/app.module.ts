@@ -9,6 +9,9 @@ import { AppService } from './app.service';
 import { HealthCheckModule } from './health-check/health-check.module';
 import { AllExceptionsFilter } from './utils.common/utils.exception.common/all-exception-filter';
 import { AppV1Module } from './v1/app.v1.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -41,6 +44,14 @@ import { AppV1Module } from './v1/app.v1.module';
     //   url: process.env.POSTGRE_STRING,
 
     // }),
+
+    // MulterModule.register({
+    //   dest: './upload',
+    // }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'res'), // Thư mục 'res' chứa file tĩnh
+      serveRoot: '/public/res', // URL để truy cập file: /res/<filename>
+    }),
     HealthCheckModule,
     AppV1Module,
   ],

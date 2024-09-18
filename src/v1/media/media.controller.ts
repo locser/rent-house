@@ -1,9 +1,52 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { MediaService } from './media.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiOperation } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
+
+  // @ApiOperation({ summary: 'Tải lên media' })
+  // @Post('upload')
+  // @UseInterceptors(FileInterceptor('file'))
+  // async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  //   console.log(file);
+  // }
+
+  @ApiOperation({ summary: 'Tải lên media (ảnh hoặc video)' })
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './res', // Thư mục lưu file
+        filename: (req, file, cb) => {
+          // Tạo tên file duy nhất: media-<Date.now()>.png hoặc .mp4
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = extname(file.originalname); // Lấy phần mở rộng của file
+          const filename = `media-${uniqueSuffix}${ext}`;
+          cb(null, filename);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        // Cho phép cả ảnh và video
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|mp4|mkv|mov|avi)$/)) {
+          return cb(new Error('Chỉ chấp nhận file hình ảnh hoặc video!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new Error('File is empty');
+    }
+    // Trả về đường dẫn file sau khi upload
+    const filePath = `public/res/${file.filename}`;
+    return { filePath };
+  }
 }
 
 // @ApiOperation({ summary: 'Tạo record cho media cần upload' })

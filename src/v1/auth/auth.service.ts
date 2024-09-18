@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Body, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -10,6 +10,7 @@ import { LoginDto } from './dto/user-sign-in.dto';
 import { SignUpDto } from './dto/user-sign-up.dto';
 import { UserEntity } from '../user/entities/user.entity';
 import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
+import { ROLES_KEY } from './roles.decorator';
 
 @Injectable()
 export class AuthService {
@@ -125,11 +126,23 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(signUpDto.password, 5);
 
-    let newUser = this.usersRepository.create({
-      full_name: signUpDto.full_name,
-      email: signUpDto.email,
-      password: hashedPassword,
-    });
+    // let newUser = this.usersRepository.create({
+    //   full_name: signUpDto.full_name,
+    //   email: signUpDto.email,
+    //   password: hashedPassword,
+    //   gender: 0,
+    //   type: signUpDto.type,
+    //   status: 2,
+    // });
+    let newUser = new UserEntity();
+    newUser.full_name = signUpDto.full_name;
+    newUser.email = signUpDto.email;
+    newUser.password = hashedPassword;
+    newUser.gender = 0;
+    newUser.type = signUpDto.type;
+    newUser.status = 2;
+    newUser.role = '';
+    console.log('locser -> file: auth.service.ts:133 -> signUp -> newUser:', newUser);
 
     newUser = await this.usersRepository.save(newUser);
     // instead of the user object

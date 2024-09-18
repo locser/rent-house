@@ -7,7 +7,7 @@ import { MEDIA_FORMAT, MEDIA_PATH, MEDIA_TYPE, MEDIA_URL_TYPE } from 'src/utils.
 import moment from 'moment';
 import { platform } from 'os';
 import { UploadMedia } from './dto/upload-media.dto';
-import { MediaResponse } from './res/generate-media.response';
+import { MediaResponse } from './response/generate-media.response';
 import { nanoid } from 'nanoid';
 import { MediaEntity } from './entities/media.entity';
 import { BOOLEAN_ENUM } from 'src/utils.common/utils.enum.common/utils.boolean.enum';
