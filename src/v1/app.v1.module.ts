@@ -9,7 +9,7 @@ import { ReportModule } from './report/report.module';
 import { UserModule } from './user/user.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { MediaModule } from './media/media.module';
-// import { MyVnpayModule } from './vnpay/vnpay.module';
+import { MyVnpayModule } from './my-vnpay/vnpay.module';
 
 let routes: Routes = [
   {
@@ -24,7 +24,7 @@ let routes: Routes = [
       ReportModule,
       WishlistModule,
       MediaModule,
-      // MyVnpayModule,
+      MyVnpayModule,
     ],
   },
 ];
@@ -41,7 +41,7 @@ let routes: Routes = [
     ReportModule,
     WishlistModule,
     MediaModule,
-    // MyVnpayModule,
+    MyVnpayModule,
   ],
   controllers: [],
   providers: [],

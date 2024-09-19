@@ -11,6 +11,8 @@ import { UserEntity } from '../user/entities/user.entity';
 import { BookingService } from './booking.service';
 import { BodyUpdateStatusDto } from './dto/body-update-status.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from 'src/utils.common/utils.enum.common/utils.user.enum';
 
 @Auth(TYPE_PLATFORM.ADMIN, TYPE_PLATFORM.SELLER, TYPE_PLATFORM.CUSTOMER)
 @ApiTags('BOOKING')
@@ -56,6 +58,22 @@ export class BookingController {
     const data = await this.bookingService.updateEntity(user, param.id, createBookingDto);
     returnBaseResponse(res, data);
     // return res.status(HttpStatus.OK).send(new BaseResponseData(HttpStatus.OK, 'OK', data));
+  }
+
+  @ApiOperation({ summary: 'Tạo hợp đồng thuê nhà bởi người cho thuê nhà (người đăng tin)' })
+  @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
+  @ApiParam({ name: 'id', description: 'Thông tin của booking thuê nhà' })
+  @ApiBody({ type: BodyUpdateStatusDto })
+  @Post('/:id/create-contract')
+  @Roles([Role.ADMIN, Role.SENDER])
+  async createContract(
+    @GetUserFromToken() user: UserEntity,
+    @Param() param: ParamEntityDTO,
+    // @Body() body: BodyUpdateStatusDto,
+    @Res() res: Response,
+  ) {
+    const data = await this.bookingService.createContract(user, param.id);
+    returnBaseResponse(res, data);
   }
 
   @ApiOperation({ summary: 'Lấy thông tin chi tiết booking thuê nhà' })

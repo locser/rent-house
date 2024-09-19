@@ -1,126 +1,132 @@
-import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, Query, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
+import * as moment from 'moment-timezone';
+import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.base.response.common';
+import { Auth, GetUserFromToken, TYPE_PLATFORM } from '../auth/auth.guard';
+import { Public } from '../auth/roles.decorator';
+import { UserEntity } from '../user/entities/user.entity';
 import { MyVnpayService } from './vnpay.service';
 
-import {
-  IpnFailChecksum,
-  IpnOrderNotFound,
-  IpnInvalidAmount,
-  InpOrderAlreadyConfirmed,
-  IpnUnknownError,
-  IpnSuccess,
-  VerifyReturnUrl,
-  consoleLogger,
-  CURR_CODE_VND,
-  VnpCurrCode,
-} from 'vnpay';
-
-import { ProductCode, VnpLocale, dateFormat } from 'vnpay';
-import { VnpayService } from 'nestjs-vnpay';
-import { Request, Response } from 'express';
-
-/* ... */
-
-@Controller('vnpay')
+@Controller('')
 export class MyVnpayController {
-  constructor(
-    private readonly vnpayService: MyVnpayService,
-    private vnpay: VnpayService,
-  ) {}
+  constructor(private readonly vnpayService: MyVnpayService) {}
 
   @Get('vnpay_return')
   async handleIpn(@Query() query: any, @Res() res: Response) {
-    try {
-      return res.json(IpnSuccess);
-
-      const verify: VerifyReturnUrl = await this.vnpay.verifyIpnCall(query);
-      if (!verify.isVerified) {
-        return res.json(IpnFailChecksum);
-      }
-      // // Sau đó cập nhật trạng thái về cho VNPay biết rằng bạn đã xác nhận đơn hàng
-      return res.json(IpnSuccess);
-    } catch (error) {
-      /**
-       * Xử lí lỗi ngoại lệ
-       * Ví dụ như không đủ dữ liệu, dữ liệu không hợp lệ, cập nhật database thất bại
-       */
-      console.log(`verify error: ${error}`);
-      return res.json(IpnUnknownError);
-    }
+    return res.json({});
   }
 
-  @Get('create-payment')
-  async createPayment(@Req() req: Request, @Body() body: any, @Res() res: Response) {
-    const { orderId, amount, returnUrl } = body;
+  // call http://localhost:3000/api/v1/vnpay/payment?user_id=${user.id}&order_id=${body.orderId}&amount=${body.amount}
 
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getMinutes() + 5);
+  @Public()
+  @Get('/vnpay/payment')
+  async callPayment(@GetUserFromToken() user: UserEntity, @Req() req: Request, @Query() body: any, @Res() res: Response) {
+    const { order_id, amount, user_id } = body;
 
-    const paymentUrl = this.vnpay.buildPaymentUrl(
-      {
-        vnp_Amount: 10000000, // Đơn vị VND. Số tiền đã được tự động tính toán, không cần nhân 100 lần theo VNPay
-        vnp_CurrCode: VnpCurrCode.VND, // Đơn vị tiền tệ
-        vnp_IpAddr: '133.322.11.23',
-        vnp_TxnRef: '123', // Mã này là duy nhất dùng để phân biệt các đơn hàng gửi sang VNPAY. Không được trùng lặp trong ngày
-        vnp_OrderInfo: 'Thanh toan don hang locser', //	Quy định dữ liệu gửi sang VNPAY (Tiếng Việt không dấu và không bao gồm các ký tự đặc biệt). Ví dụ: Nap tien cho thue bao 0123456789. So tien 100,000 VND
-        vnp_OrderType: ProductCode.Other,
-        vnp_ReturnUrl: 'http://localhost:3000/api/v1/vnpay/vnpay_return',
-        vnp_Locale: VnpLocale.VN, // 'vn' hoặc 'en'
-        vnp_CreateDate: dateFormat(new Date()), // tùy chọn, mặc định là hiện tại
-        vnp_ExpireDate: dateFormat(tomorrow), // tùy chọn
-        // vnp_BankCode: 'VNPAY',
-      },
-      {
-        logger: {
-          type: 'pick', // Chế độ chọn trường log, có thể là 'pick', 'omit' hoặc 'all'
-          fields: ['createdAt', 'method', 'paymentUrl'], // Chọn các trường cần log
-          loggerFn: consoleLogger, // Log dữ liệu ra console, có thể thay bằng hàm khác
-        },
-      },
+    console.log(' nạp tiền cho user_id', user_id, ' thành công ', amount);
+
+    return res.status(200).json(new BaseResponseData(200, 'success', {}));
+  }
+
+  @Auth(TYPE_PLATFORM.ADMIN, TYPE_PLATFORM.SELLER, TYPE_PLATFORM.CUSTOMER)
+  @Get('/vnpay/create-url-payment')
+  async createPayment(@GetUserFromToken() user: UserEntity, @Req() req: Request, @Query() body: any, @Res() res: Response) {
+    // const { orderId, amount, returnUrl } = body;
+    const date = new Date();
+    let createDate = moment(date).format('YYYYMMDDHHmmss');
+
+    let tmnCode = '0C5GM1QL';
+    let secretKey = 'P643CAZ3GQLZQ4D2H5Y21F65N4DPN7QN';
+    let vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
+    let returnUrl = `http://localhost:3000/api/v1/vnpay/payment?user_id=${user.id}&order_id=${body.orderId}&amount=${body.amount}`;
+    // let returnUrl = `{user_id: ${user.id}, order_id: ${body.orderId}, amount: ${body.amount}}`;
+    let orderId = moment(date).format('DDHHmmss');
+    let amount = body?.amount;
+    let bankCode = body?.bankCode;
+
+    let locale = req.body.language;
+    if (locale === null || locale === '') {
+      locale = 'vn';
+    }
+    let currCode = 'VND';
+    let vnp_Params = {};
+    vnp_Params['vnp_Version'] = '2.1.0';
+    vnp_Params['vnp_Command'] = 'pay';
+    vnp_Params['vnp_TmnCode'] = tmnCode;
+    vnp_Params['vnp_Locale'] = locale;
+    vnp_Params['vnp_CurrCode'] = currCode;
+    vnp_Params['vnp_TxnRef'] = orderId;
+    vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + orderId;
+    vnp_Params['vnp_OrderType'] = 'other';
+    vnp_Params['vnp_Amount'] = amount * 100;
+    vnp_Params['vnp_ReturnUrl'] = returnUrl;
+    vnp_Params['vnp_IpAddr'] = '127.0.0.1';
+    vnp_Params['vnp_CreateDate'] = createDate;
+    if (bankCode !== null && bankCode !== '') {
+      vnp_Params['vnp_BankCode'] = bankCode;
+    }
+
+    vnp_Params = this.sortObject(vnp_Params);
+    // console.log('locser -> file: order.js:81 -> vnp_Params:', vnp_Params);
+
+    let querystring = require('qs');
+    let signData = querystring.stringify(vnp_Params, { encode: false });
+    let crypto = require('crypto');
+    let hmac = crypto.createHmac('sha512', secretKey);
+    let signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
+    vnp_Params['vnp_SecureHash'] = signed;
+    vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
+
+    return res.status(200).json(
+      new BaseResponseData(200, 'success', {
+        url: vnpUrl,
+      }),
     );
-    return res.json(paymentUrl);
+  }
+
+  @Auth(TYPE_PLATFORM.ADMIN, TYPE_PLATFORM.SELLER, TYPE_PLATFORM.CUSTOMER)
+  @Get('my-wallet')
+  async getMyWallet(@GetUserFromToken() user: UserEntity, @Req() req: Request, @Query() body: any, @Res() res: Response) {
+    const data = await this.vnpayService.getAllWallets(+user.id);
+    return res.status(200).json(new BaseResponseData(200, 'success', data));
+  }
+
+  @Auth(TYPE_PLATFORM.ADMIN, TYPE_PLATFORM.SELLER, TYPE_PLATFORM.CUSTOMER)
+  @Get('history-payment')
+  async getHistoryPayment(@GetUserFromToken() user: UserEntity, @Req() req: Request, @Query() body: any, @Res() res: Response) {
+    const data = await this.vnpayService.getTransactionHistory(+user.id);
+    return res.status(200).json(new BaseResponseData(200, 'success', data));
+  }
+
+  sortObject(obj) {
+    let sorted = {};
+    let str = [];
+    let key;
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        str.push(encodeURIComponent(key));
+      }
+    }
+    str.sort();
+    for (key = 0; key < str.length; key++) {
+      sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, '+');
+    }
+    return sorted;
   }
 }
-
-// app.get('/vnpay-ipn', async (req, res) => {
-//   try {
-//       const verify: VerifyReturnUrl = vnpay.verifyIpnCall(req.query);
-//       if (!verify.isVerified) {
-//           return res.json(IpnFailChecksum);
-//       }
-
-//       // Tìm đơn hàng trong database của bạn
-//       const foundOrder = await findOrderById(verify.vnp_TxnRef); // Hàm tìm đơn hàng theo id, bạn cần tự cài đặt
-
-//       // Nếu không tìm thấy đơn hàng hoặc mã đơn hàng không khớp
-//       if (!foundOrder || verify.vnp_TxnRef !== foundOrder.orderId) {
-//           return res.json(IpnOrderNotFound);
-//       }
-
-//       // Nếu số tiền thanh toán không khớp
-//       if (verify.vnp_Amount !== foundOrder.amount) {
-//           return res.json(IpnInvalidAmount);
-//       }
-
-//       // Nếu đơn hàng đã được xác nhận trước đó
-//       if (foundOrder.status === 'completed') {
-//           return res.json(InpOrderAlreadyConfirmed);
-//       }
-
-//       /**
-//        * Sau khi xác thực đơn hàng hoàn tất,
-//        * bạn có thể cập nhật trạng thái đơn hàng trong database của bạn
-//        */
-//       foundOrder.status = 'completed';
-//       await updateOrder(foundOrder); // Hàm cập nhật trạng thái đơn hàng, bạn cần tự cài đặt
-
-//       // Sau đó cập nhật trạng thái về cho VNPay biết rằng bạn đã xác nhận đơn hàng
-//       return res.json(IpnSuccess);
-//   } catch (error) {
-//       /**
-//        * Xử lí lỗi ngoại lệ
-//        * Ví dụ như không đủ dữ liệu, dữ liệu không hợp lệ, cập nhật database thất bại
-//        */
-//       console.log(`verify error: ${error}`);
-//       return res.json(IpnUnknownError);
-//   }
-// })
+/**
+ * locser -> file: order.js:81 -> vnp_Params: {
+  vnp_Amount: '1000000',
+  vnp_Command: 'pay',
+  vnp_CreateDate: '20240919204138',
+  vnp_CurrCode: 'VND',
+  vnp_IpAddr: '127.0.0.1',
+  vnp_Locale: 'vn',
+  vnp_OrderInfo: 'Thanh+toan+cho+ma+GD%3A19204138',
+  vnp_OrderType: 'other',
+  vnp_ReturnUrl: 'http%3A%2F%2Flocalhost%3A8888%2Forder%2Fvnpay_return',
+  vnp_TmnCode: '0C5GM1QL',
+  vnp_TxnRef: '19204138',
+  vnp_Version: '2.1.0'
+}
+ */

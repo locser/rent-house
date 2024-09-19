@@ -22,7 +22,7 @@ export class HomeController {
 
   @ApiOperation({ summary: 'Tạo nhà cho thuê' })
   @ApiOkResponse({ type: BaseResponseData, status: HttpStatus.OK })
-  @ApiBody({ type: CreateHomeDto })
+  // @ApiBody({ type: CreateHomeDto })
   @Post('')
   async create(@GetUserFromToken() user: UserEntity, @Body() createHomeDto: CreateHomeDto, @Res() res: Response) {
     const data = await this.homeService.create(createHomeDto, user);
@@ -32,7 +32,7 @@ export class HomeController {
 
   @ApiOperation({ summary: 'Lấy danh sách nhà cho thuê có phân trang ' })
   @ApiOkResponse({ type: [HomeResponse], status: HttpStatus.OK })
-  @ApiQuery({ type: CreateHomeDto })
+  // @ApiQuery({ type: CreateHomeDto })
   @Get('')
   async getPagination(@Query() query: QueryGetHomePaginationDto, @Res() res: Response) {
     const pagination = new Pagination(query.page, query.limit);

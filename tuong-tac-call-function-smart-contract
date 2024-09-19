@@ -1,0 +1,139 @@
+https://docs.infura.io/tutorials/ethereum/call-a-contract
+Để gọi hàm từ một hợp đồng thông minh đã triển khai trên Remix sử dụng Node.js, bạn có thể sử dụng thư viện `web3.js` hoặc `ethers.js`. Dưới đây là hướng dẫn chi tiết về cách thực hiện việc này với cả hai thư viện.
+
+### 1. Sử dụng `web3.js`
+
+#### Cài đặt Web3.js
+
+Trước tiên, bạn cần cài đặt thư viện `web3`:
+
+```bash
+npm install web3
+```
+
+#### Kết nối với Ethereum Network
+
+Sử dụng `web3.js` để kết nối với mạng Ethereum (có thể là Mainnet, Ropsten, Rinkeby, hoặc mạng riêng). Bạn cần có một provider, như Infura hoặc Alchemy.
+
+#### Ví dụ mã sử dụng `web3.js`
+
+Dưới đây là cách bạn có thể gọi hàm từ hợp đồng thông minh:
+
+```javascript
+const Web3 = require('web3');
+const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'));
+
+// Địa chỉ hợp đồng thông minh
+const contractAddress = '0xYourContractAddress';
+
+// ABI của hợp đồng thông minh (truy xuất từ Remix)
+const abi = [
+  // ABI của hợp đồng thông minh ở đây
+];
+
+// Tạo đối tượng hợp đồng
+const contract = new web3.eth.Contract(abi, contractAddress);
+
+// Thực hiện giao dịch để gọi hàm tạo hợp đồng
+async function callCreateContractFunction() {
+  const accounts = await web3.eth.getAccounts();
+  
+  try {
+    const response = await contract.methods.createContract(
+      'contractId', 
+      'requestId', 
+      'houseId', 
+      'lessorId', 
+      'lesseeId', 
+      1633096800, // rentalStartTime
+      1633688600, // rentalEndTime
+      1000 // depositAmount
+    ).send({ from: accounts[0] });
+    
+    console.log('Transaction successful', response);
+  } catch (error) {
+    console.error('Error executing transaction', error);
+  }
+}
+
+callCreateContractFunction();
+```
+
+### 2. Sử dụng `ethers.js`
+
+#### Cài đặt Ethers.js
+
+Cài đặt thư viện `ethers`:
+
+```bash
+npm install ethers
+```
+
+#### Ví dụ mã sử dụng `ethers.js`
+
+Dưới đây là cách gọi hàm từ hợp đồng thông minh với `ethers.js`:
+
+```javascript
+const { ethers } = require('ethers');
+
+// Kết nối với Ethereum Network
+const provider = new ethers.JsonRpcProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+
+// Địa chỉ hợp đồng thông minh
+const contractAddress = '0xYourContractAddress';
+
+// ABI của hợp đồng thông minh (truy xuất từ Remix)
+const abi = [
+  // ABI của hợp đồng thông minh ở đây
+];
+
+// Tạo đối tượng hợp đồng
+const contract = new ethers.Contract(contractAddress, abi, provider);
+
+// Ký giao dịch với một wallet (tạo đối tượng signer)
+const privateKey = 'YOUR_PRIVATE_KEY'; // Thay bằng khóa riêng của bạn
+const wallet = new ethers.Wallet(privateKey, provider);
+
+// Kết hợp wallet với hợp đồng để có quyền gửi giao dịch
+const contractWithSigner = contract.connect(wallet);
+
+// Gọi hàm tạo hợp đồng
+async function callCreateContractFunction() {
+  try {
+    const tx = await contractWithSigner.createContract(
+      'contractId', 
+      'requestId', 
+      'houseId', 
+      'lessorId', 
+      'lesseeId', 
+      1633096800, // rentalStartTime
+      1633688600, // rentalEndTime
+      1000 // depositAmount
+    );
+
+    console.log('Transaction hash:', tx.hash);
+
+    // Chờ giao dịch hoàn thành
+    await tx.wait();
+    console.log('Transaction confirmed');
+  } catch (error) {
+    console.error('Error executing transaction', error);
+  }
+}
+
+callCreateContractFunction();
+```
+
+### Lưu ý
+
+1. **Chìa khóa riêng (Private Key)**: Nếu bạn sử dụng `ethers.js`, bạn cần phải có chìa khóa riêng để ký giao dịch. Hãy đảm bảo giữ gìn bảo mật cho chìa khóa riêng và không chia sẻ nó công khai.
+
+2. **ABI**: Bạn cần ABI (Application Binary Interface) của hợp đồng thông minh, có thể lấy từ Remix hoặc các công cụ biên dịch hợp đồng thông minh khác.
+
+3. **Provider**: Thay thế `YOUR_INFURA_PROJECT_ID` và `0xYourContractAddress` bằng ID dự án Infura của bạn và địa chỉ hợp đồng thông minh thực tế.
+
+4. **Network**: Đảm bảo bạn kết nối đến đúng mạng (Mainnet, Ropsten, Rinkeby, hoặc mạng riêng).
+
+5. **Gas Fees**: Các giao dịch trên Ethereum yêu cầu phí gas. Đảm bảo rằng ví của bạn có đủ ETH để thực hiện giao dịch.
+
+Với các bước trên, bạn có thể gọi các hàm từ hợp đồng thông minh trên Ethereum thông qua Node.js, sử dụng `web3.js` hoặc `ethers.js`.

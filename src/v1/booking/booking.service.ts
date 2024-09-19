@@ -1,19 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateHomeDto } from '../home/dto/create-home.dto';
-import { BookingEntity } from './entities/booking.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Not, Repository } from 'typeorm';
-import { CreateBookingDto } from './dto/create-booking.dto';
-import { DataSourceService } from 'src/database-source/database_source.service';
-import { ParamEntityDTO, QueryPaginationDTO } from 'src/utils.common/utils.validator.common/query-pagination';
-import { UserEntity } from '../user/entities/user.entity';
-import { TYPE_PLATFORM } from '../auth/auth.guard';
-import { HomeEntity } from '../home/entities/home.entity';
-import { BookingResponse } from './response/booking.response';
-import { Pagination } from 'src/utils.common/utils.pagination.pagination/utils.pagination';
-import { BOOKING_STATUS } from 'src/utils.common/utils.enum.common/utils.booking.enum';
 import moment from 'moment-timezone';
+import { DataSourceService } from 'src/database-source/database_source.service';
+import { BOOKING_STATUS } from 'src/utils.common/utils.enum.common/utils.booking.enum';
+import { Pagination } from 'src/utils.common/utils.pagination.pagination/utils.pagination';
+import { In, Not, Repository } from 'typeorm';
+import { TYPE_PLATFORM } from '../auth/auth.guard';
 import { BodyBookingDto } from '../home/dto/body-booking.dto';
+import { HomeEntity } from '../home/entities/home.entity';
+import { EContractEntity } from '../shared/e_contract.entity';
+import { UserEntity } from '../user/entities/user.entity';
+import { BookingEntity } from './entities/booking.entity';
+import { BookingResponse } from './response/booking.response';
 
 @Injectable()
 export class BookingService {
@@ -21,8 +19,28 @@ export class BookingService {
     @InjectRepository(BookingEntity)
     private readonly selfRepository: Repository<BookingEntity>,
 
+    @InjectRepository(EContractEntity)
+    private readonly eContractRepository: Repository<EContractEntity>,
+
     private dataSourceService: DataSourceService,
   ) {}
+
+  async createContract(user: UserEntity, id: number) {
+    const home = await this.selfRepository.findOne({
+      where: {
+        id: id,
+        status: BOOKING_STATUS.CONFIRMED,
+        owner_id: user.id,
+      },
+    });
+
+    if (!home) {
+      throw new HttpException('Không tìm thấy booking này', HttpStatus.BAD_REQUEST);
+    }
+
+    // const newECOntract = new EContractEntity();
+    // newECOntract.booking_id = home.id;
+  }
 
   async getMyBookings(user: UserEntity, pagination: Pagination): Promise<{ list: any; total_record: number }> {
     const [list, total_record] = await this.selfRepository.findAndCount({

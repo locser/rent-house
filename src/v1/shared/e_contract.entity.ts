@@ -8,11 +8,11 @@ export class EContractEntity {
   @Column({ type: 'varchar', length: 255 })
   contract_id: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  contract_template_id: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // contract_template_id: string;
 
-  @Column({ type: 'int' })
-  contract_temporary_id: number;
+  // @Column({ type: 'int' })
+  // contract_temporary_id: number;
 
   @Column({ type: 'varchar', length: 255 })
   title: string;
@@ -23,8 +23,8 @@ export class EContractEntity {
   @Column({ type: 'varchar', length: 255 })
   signatures: string;
 
-  @Column({ type: 'int' })
-  documents: number;
+  // @Column({ type: 'int' })
+  // documents: number;
 
   @CreateDateColumn() // Tự động tạo giá trị thời gian tạo
   created_at: Date;
@@ -35,11 +35,11 @@ export class EContractEntity {
   @Column({ type: 'date' }) // Sử dụng kiểu dữ liệu date cho ngày
   end_date: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  template_group_id: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // template_group_id: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  template_id: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // template_id: string;
 
   @Column({ type: 'varchar', length: 255 })
   customer_id: string;
@@ -50,8 +50,8 @@ export class EContractEntity {
   @Column({ type: 'varchar', length: 255 })
   token_id: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  contract_value: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // contract_value: string;
 
   @Column({ type: 'varchar', nullable: true }) // Cho phép null
   creation_note: string;
@@ -74,23 +74,23 @@ export class EContractEntity {
   @Column({ type: 'varchar', length: 255 })
   customer_name: string;
 
-  @Column({ type: 'int' })
-  customer_signing_limited: number;
+  // @Column({ type: 'int' })
+  // customer_signing_limited: number;
 
-  @Column({ type: 'varchar', length: 255 })
-  customer_role: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // customer_role: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  customer_company_name: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // customer_company_name: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  customer_company_address: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // customer_company_address: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  customer_company_tax_code: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // customer_company_tax_code: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  customer_gender: string;
+  // @Column({ type: 'varchar', length: 255 })
+  // customer_gender: string;
 
   @Column({ type: 'date' }) // Sử dụng kiểu dữ liệu date cho ngày
   effective_date: string;
@@ -100,4 +100,7 @@ export class EContractEntity {
 
   @Column({ type: 'int' })
   is_send: number;
+
+  @Column({ type: 'int' })
+  is_sign: number;
 }
